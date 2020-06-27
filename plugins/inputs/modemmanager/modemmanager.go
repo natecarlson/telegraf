@@ -11,7 +11,6 @@ import (
 
 type ModemManager struct {
 	Interface	string
-	ConnectionType	string
 	Connected	bool
 	SignalRssi	int64
 	SignalRsrp	int64
@@ -44,7 +43,7 @@ func (m *ModemManager) Gather(acc telegraf.Accumulator) error {
         }
         for _, modem := range modems {
                 tags := make(map[string]string)
-                fieldsS := make(map[string]interface{})
+                /* fieldsS := make(map[string]interface{}) */
                 fieldsG := make(map[string]interface{})
                 /* fieldsC := make(map[string]interface{}) */
 
@@ -88,7 +87,7 @@ func (m *ModemManager) Gather(acc telegraf.Accumulator) error {
 
                 CurrentSignals, err := modemSignal.GetCurrentSignals()
                 for _, CurrentSignal := range CurrentSignals {
-			fieldsS["ConnectionType"] = CurrentSignal.Type
+			tags["ConnectionType"] = fmt.Sprintf("%v", CurrentSignal.Type)
 			fieldsG["SignalRssi"] = CurrentSignal.Rssi
 			fieldsG["SignalRsrp"] = CurrentSignal.Rsrp
 			fieldsG["SignalRsrq"] = CurrentSignal.Rsrq
@@ -101,7 +100,7 @@ func (m *ModemManager) Gather(acc telegraf.Accumulator) error {
                         fmt.Println("SignalSnr", CurrentSignal.Snr)
                 }
 
-                acc.AddFields("modemmanager", fieldsS, tags)
+                /* acc.AddFields("modemmanager", fieldsS, tags) */
                 acc.AddGauge("modemmanager", fieldsG, tags)
                 /* acc.AddCounter("modemmanager", fieldsC, tags) */
 	}
